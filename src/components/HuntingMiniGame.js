@@ -104,7 +104,7 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     useEffect(() =>
     {
-        console.log('HuntingMiniGame v2.6 mounted, onEnd type:', typeof onEnd);
+        console.log('HuntingMiniGame v2.7 mounted, onEnd type:', typeof onEnd);
         return () => console.log('HuntingMiniGame unmounting');
     }, [onEnd]);
 
@@ -267,7 +267,7 @@ const HuntingMiniGame = ({ onEnd }) =>
                     {
                         setFoodGained(prev => prev + animal.weight);
                         setBullets(prev => prev.filter(b =>
-                            Math.sqrt((b.x - (animal.x + animal.size / 2)) ** 2 + (b.y - (animal.y + animal.size / 2)) ** 2) >= animal.size / 2 + 3
+                            Math.sqrt((b.x - (animal.x + animal.size / 2)) ** 2 + (bullet.y - (animal.y + animal.size / 2)) ** 2) >= animal.size / 2 + 3
                         ));
                     } else
                     {
@@ -344,14 +344,17 @@ const HuntingMiniGame = ({ onEnd }) =>
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top; // Add Y for debugging
+            console.log('Touch Start - X:', touchX, 'Y:', touchY, 'Canvas Width:', rect.width, 'Canvas Height:', rect.height);
 
-            if (touchX < canvas.width / 2)
+            // Adjust the boundary to make the right half wider (e.g., 60% for right, 40% for left)
+            if (touchX < rect.width * 0.4)
             {
-                // Left half: Start aiming
+                // Left 40%: Start aiming
                 setTouchStartX(touchX);
             } else
             {
-                // Right half: Shoot
+                // Right 60%: Shoot
                 if (ammo > 0)
                 {
                     setAmmo(ammo - 1);
@@ -379,10 +382,10 @@ const HuntingMiniGame = ({ onEnd }) =>
             const touchX = touch.clientX - rect.left;
             const deltaX = touchX - touchStartX;
 
-            // Reduced sensitivity from 0.005 to 0.002 for smoother aiming
+            // Reduced sensitivity from 0.002 to 0.001 for even smoother aiming
             setGunAngle(prev =>
             {
-                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.002));
+                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.001));
                 gunAngleRef.current = newAngle;
                 return newAngle;
             });
@@ -411,9 +414,9 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     return (
         <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-            <h2>Hunting (v2.6)</h2>
+            <h2>Hunting (v2.7)</h2>
             <p>Time Left: {timeLeft}s | Ammo: {ammo} | Food Gained: {foodGained} lbs</p>
-            <p>Desktop: Left/Right arrows to aim, Space to shoot. Mobile: Swipe left half to aim, tap right half to shoot.</p>
+            <p>Desktop: Left/Right arrows to aim, Space to shoot. Mobile: Swipe left 40% to aim, tap right 60% to shoot.</p>
             <canvas
                 ref={canvasRef}
                 width={600}
