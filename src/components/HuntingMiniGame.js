@@ -111,6 +111,8 @@ const HuntingMiniGame = ({ onEnd }) =>
     useEffect(() =>
     {
         const canvas = canvasRef.current;
+        if (!canvas) return; // Safety check if canvas isn’t ready
+
         const ctx = canvas.getContext('2d');
         let animationFrame;
 
@@ -138,6 +140,8 @@ const HuntingMiniGame = ({ onEnd }) =>
 
         const draw = () =>
         {
+            if (!ctx) return; // Ensure context exists
+
             ctx.fillStyle = '#8A7F6F';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -198,14 +202,17 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     useEffect(() =>
     {
+        const canvas = canvasRef.current;
+        if (!canvas) return; // Safety check
+
         const spawnAnimal = () =>
         {
             const animal = animals[Math.floor(Math.random() * animals.length)];
             const angle = Math.random() * 2 * Math.PI;
             const newAnimal = {
                 ...animal,
-                x: Math.random() * canvasRef.current.width,
-                y: Math.random() * canvasRef.current.height,
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
                 dx: animal.speed * Math.cos(angle),
                 dy: animal.speed * Math.sin(angle),
             };
@@ -218,6 +225,9 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     useEffect(() =>
     {
+        const canvas = canvasRef.current;
+        if (!canvas) return; // Safety check
+
         const updatePositions = () =>
         {
             setFrameCount(prev => prev + 1);
@@ -230,8 +240,8 @@ const HuntingMiniGame = ({ onEnd }) =>
                     let newDx = a.dx;
                     let newDy = a.dy;
 
-                    if (newX < -a.size || newX > canvasRef.current.width) newDx = -newDx;
-                    if (newY < 0 || newY > canvasRef.current.height - a.size) newDy = -newDy;
+                    if (newX < -a.size || newX > canvas.width) newDx = -newDx;
+                    if (newY < 0 || newY > canvas.height - a.size) newDy = -newDy;
 
                     return { ...a, x: newX, y: newY, dx: newDx, dy: newDy };
                 })
@@ -242,7 +252,7 @@ const HuntingMiniGame = ({ onEnd }) =>
                     ...bullet,
                     x: bullet.x + bullet.dx,
                     y: bullet.y + bullet.dy,
-                })).filter(bullet => bullet.y > 0 && bullet.x >= 0 && bullet.x <= canvasRef.current.width)
+                })).filter(bullet => bullet.y > 0 && bullet.x >= 0 && bullet.x <= canvas.width)
             );
 
             setActiveAnimals(prevAnimals =>
@@ -324,6 +334,7 @@ const HuntingMiniGame = ({ onEnd }) =>
     useEffect(() =>
     {
         const canvas = canvasRef.current;
+        if (!canvas) return;
 
         const handleTouchStart = (e) =>
         {
@@ -334,11 +345,9 @@ const HuntingMiniGame = ({ onEnd }) =>
 
             if (touchX < canvas.width / 2)
             {
-                // Left half: Start aiming
                 setTouchStartX(touchX);
             } else
             {
-                // Right half: Shoot
                 if (ammo > 0)
                 {
                     setAmmo(ammo - 1);
@@ -366,10 +375,9 @@ const HuntingMiniGame = ({ onEnd }) =>
             const touchX = touch.clientX - rect.left;
             const deltaX = touchX - touchStartX;
 
-            // Adjust gun angle based on swipe distance
             setGunAngle(prev =>
             {
-                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.005)); // Sensitivity: 0.005 radians per pixel
+                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.005));
                 gunAngleRef.current = newAngle;
                 return newAngle;
             });
@@ -387,9 +395,12 @@ const HuntingMiniGame = ({ onEnd }) =>
 
         return () =>
         {
-            canvas.removeEventListener('touchstart', handleTouchStart);
-            canvas.removeEventListener('touchmove', handleTouchMove);
-            canvas.removeEventListener('touchend', handleTouchEnd);
+            if (canvas)
+            {
+                canvas.removeEventListener('touchstart', handleTouchStart);
+                canvas.removeEventListener('touchmove', handleTouchMove);
+                canvas.removeEventListener('touchend', handleTouchEnd);
+            }
         };
     }, [ammo, touchStartX]);
 

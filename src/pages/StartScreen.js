@@ -17,6 +17,7 @@ const StartScreen = () =>
     const { gameState, setGameState } = useContext(GameContext);
     const [profession, setProfession] = useState('');
     const [party, setParty] = useState(['', '', '', '', '']);
+    const [difficulty, setDifficulty] = useState('Medium'); // Default to Medium
     const navigate = useNavigate();
 
     const handleProfessionChange = (e) =>
@@ -33,11 +34,17 @@ const StartScreen = () =>
         setParty(newParty);
     };
 
+    const handleDifficultyChange = (e) =>
+    {
+        setDifficulty(e.target.value);
+    };
+
     const handleStart = () =>
     {
         setGameState({
             ...gameState,
             party: party.map(name => ({ name, health: 'Good' })),
+            difficulty, // Set difficulty in game state
         });
         navigate('/store');
     };
@@ -54,6 +61,15 @@ const StartScreen = () =>
                             {prof} - ${money}
                         </option>
                     ))}
+                </select>
+            </label>
+            <br />
+            <label>
+                Choose difficulty:
+                <select value={difficulty} onChange={handleDifficultyChange}>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
                 </select>
             </label>
             <h2>Name your party members:</h2>

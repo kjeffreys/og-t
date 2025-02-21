@@ -7,6 +7,7 @@ const itemPrices = {
     food: 0.2, // per lb
     clothing: 10, // per set
     ammunition: 2, // per box
+    medicine: 10, // per unit (changed from "bottle" for consistency)
     spareParts: { wheels: 10, axles: 10, tongues: 10 },
 };
 
@@ -18,6 +19,7 @@ const Store = () =>
         food: 0,
         clothing: 0,
         ammunition: 0,
+        medicine: 0, // Added to initial cart state
         spareParts: { wheels: 0, axles: 0, tongues: 0 },
     });
     const navigate = useNavigate();
@@ -29,6 +31,7 @@ const Store = () =>
             cart.food * itemPrices.food +
             cart.clothing * itemPrices.clothing +
             cart.ammunition * itemPrices.ammunition +
+            (cart.medicine || 0) * itemPrices.medicine + // Ensure medicine is included
             cart.spareParts.wheels * itemPrices.spareParts.wheels +
             cart.spareParts.axles * itemPrices.spareParts.axles +
             cart.spareParts.tongues * itemPrices.spareParts.tongues
@@ -46,7 +49,20 @@ const Store = () =>
         setGameState({
             ...gameState,
             money: gameState.money - total,
-            supplies: cart,
+            supplies: {
+                ...gameState.supplies, // Preserve existing supplies structure
+                oxen: cart.oxen,
+                food: cart.food,
+                clothing: cart.clothing,
+                ammunition: cart.ammunition,
+                medicine: cart.medicine || 0, // Ensure medicine is set
+                spareParts: {
+                    ...gameState.supplies.spareParts, // Preserve other spare parts if any
+                    wheels: cart.spareParts.wheels,
+                    axles: cart.spareParts.axles,
+                    tongues: cart.spareParts.tongues,
+                },
+            },
         });
         navigate('/travel');
     };
@@ -86,6 +102,14 @@ const Store = () =>
                     type="number"
                     value={cart.ammunition}
                     onChange={(e) => setCart({ ...cart, ammunition: parseInt(e.target.value) || 0 })}
+                />
+            </label>
+            <label>
+                Medicine (units):{' '}
+                <input
+                    type="number"
+                    value={cart.medicine || 0}
+                    onChange={(e) => setCart({ ...cart, medicine: parseInt(e.target.value) || 0 })}
                 />
             </label>
             <label>
