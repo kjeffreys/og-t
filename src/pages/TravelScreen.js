@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../context/GameContext';
 import StatusBar from '../components/StatusBar';
 import ActionButtons from '../components/ActionButtons';
@@ -13,7 +13,7 @@ const TravelScreen = () =>
     const [currentEvent, setCurrentEvent] = useState(null);
     const [isHunting, setIsHunting] = useState(false);
     const [isRiverCrossing, setIsRiverCrossing] = useState(false);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const advanceDay = () =>
     {
@@ -52,10 +52,10 @@ const TravelScreen = () =>
         // Check game end
         if (newParty.every(m => m.health === 'Dead'))
         {
-            history.push('/end');
+            navigate('/end');
         } else if (newPosition >= gameState.landmarks[gameState.landmarks.length - 1].distance)
         {
-            history.push('/end');
+            navigate('/end');
         }
     };
 

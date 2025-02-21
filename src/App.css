@@ -1,0 +1,33 @@
+body {
+    background-color: #3C2F2F; /* Dark brown background */
+    color: #E8DAB2; /* Parchment beige text */
+    font-family: 'Courier New', Courier, monospace; /* Retro typewriter feel */
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1, h2, p {
+    color: #E8DAB2;
+  }
+  
+  button {
+    background-color: #8B4513; /* Saddle brown */
+    color: #E8DAB2;
+    border: 2px solid #4A2C2A; /* Dark reddish-brown */
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  button:disabled {
+    background-color: #5C4033; /* Darker brown for disabled */
+    cursor: not-allowed;
+  }
+  
+  input, select {
+    background-color: #8A7F6F; /* Dusty tan */
+    color: #E8DAB2;
+    border: 2px solid #4A2C2A;
+    padding: 5px;
+    font-family: 'Courier New', Courier, monospace;
+  }

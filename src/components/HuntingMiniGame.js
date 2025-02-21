@@ -1,19 +1,94 @@
 import React, { useRef, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const animals = [
-    { name: 'Rabbit', weight: 5, speed: 2 },
-    { name: 'Deer', weight: 50, speed: 1 },
-    { name: 'Buffalo', weight: 200, speed: 0.5 },
+    { name: 'Rabbit', weight: 5, speed: 3, size: 12, color: '#A9A9A9' },
+    { name: 'Deer', weight: 50, speed: 1.5, size: 24, color: '#8B4513' },
+    { name: 'Buffalo', weight: 200, speed: 0.5, size: 48, color: '#5C4033' },
 ];
+
+// Updated pixel art patterns with animation frames
+const pixelPatterns = {
+    Rabbit: {
+        frame1: [
+            [0, 0, 1, 1, 0, 0], // Ear
+            [0, 1, 1, 1, 0, 0], // Ear + head
+            [0, 1, 1, 1, 1, 0], // Head + body
+            [0, 0, 1, 1, 1, 1], // Body
+            [0, 0, 1, 1, 1, 0], // Legs up
+            [0, 0, 0, 1, 0, 0], // Tail
+        ],
+        frame2: [
+            [0, 0, 1, 1, 0, 0],
+            [0, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 0],
+            [0, 0, 1, 1, 1, 1],
+            [0, 0, 1, 0, 1, 1], // Legs down
+            [0, 0, 0, 1, 0, 0],
+        ],
+    },
+    Deer: {
+        frame1: [
+            [1, 1, 0, 0, 1, 0, 0], // Antlers
+            [0, 1, 0, 0, 1, 1, 0], // Antlers + head
+            [0, 0, 1, 1, 0, 1, 0], // Head
+            [0, 0, 1, 1, 1, 1, 0], // Neck + body
+            [0, 0, 0, 1, 1, 1, 1], // Body
+            [0, 0, 1, 0, 1, 0, 0], // Legs up
+            [0, 0, 1, 0, 0, 1, 0], // Legs up
+        ],
+        frame2: [
+            [1, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 0, 1, 1, 0],
+            [0, 0, 1, 1, 0, 1, 0],
+            [0, 0, 1, 1, 1, 1, 0],
+            [0, 0, 0, 1, 1, 1, 1],
+            [0, 0, 0, 1, 0, 1, 0], // Legs down
+            [0, 0, 1, 0, 1, 0, 0], // Legs down
+        ],
+    },
+    Buffalo: {
+        frame1: [
+            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], // Horn
+            [0, 1, 1, 1, 1, 0, 0, 0, 0, 0], // Horn + head
+            [0, 1, 1, 0, 1, 1, 0, 0, 0, 0], // Head
+            [1, 1, 1, 1, 1, 1, 1, 1, 0, 0], // Hump
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], // Body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1], // Body
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], // Legs up
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0], // Legs up
+        ],
+        frame2: [
+            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0], // Legs down
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0], // Legs down
+        ],
+    },
+};
 
 const HuntingMiniGame = ({ onEnd }) =>
 {
     const canvasRef = useRef(null);
-    const [crosshair, setCrosshair] = useState({ x: 300, y: 200 });
+    const gunAngleRef = useRef(Math.PI / 2);
+    const [gunAngle, setGunAngle] = useState(Math.PI / 2);
+    const [bullets, setBullets] = useState([]);
     const [activeAnimals, setActiveAnimals] = useState([]);
     const [ammo, setAmmo] = useState(20);
     const [foodGained, setFoodGained] = useState(0);
     const [timeLeft, setTimeLeft] = useState(30);
+    const [frameCount, setFrameCount] = useState(0);
+    const [gameEnded, setGameEnded] = useState(false);
+
+    // Debugging onEnd
+    useEffect(() =>
+    {
+        console.log('HuntingMiniGame mounted, onEnd:', typeof onEnd);
+    }, [onEnd]);
 
     useEffect(() =>
     {
@@ -21,57 +96,96 @@ const HuntingMiniGame = ({ onEnd }) =>
         const ctx = canvas.getContext('2d');
         let animationFrame;
 
+        const drawAnimal = (animal) =>
+        {
+            const pattern = pixelPatterns[animal.name][frameCount % 2 === 0 ? 'frame1' : 'frame2'];
+            const pixelSize = animal.size / pattern.length;
+            for (let y = 0; y < pattern.length; y++)
+            {
+                for (let x = 0; x < pattern[y].length; x++)
+                {
+                    if (pattern[y][x] === 1)
+                    {
+                        ctx.fillStyle = animal.color;
+                        ctx.fillRect(
+                            animal.x + x * pixelSize,
+                            animal.y + y * pixelSize,
+                            pixelSize,
+                            pixelSize
+                        );
+                    }
+                }
+            }
+        };
+
         const draw = () =>
         {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#8A7F6F';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw crosshair
+            const gunX = canvas.width / 2;
+            const gunY = canvas.height - 20;
             ctx.beginPath();
-            ctx.moveTo(crosshair.x - 10, crosshair.y);
-            ctx.lineTo(crosshair.x + 10, crosshair.y);
-            ctx.moveTo(crosshair.x, crosshair.y - 10);
-            ctx.lineTo(crosshair.x, crosshair.y + 10);
-            ctx.strokeStyle = 'red';
+            ctx.moveTo(gunX, gunY);
+            ctx.lineTo(
+                gunX + 20 * Math.cos(gunAngle),
+                gunY - 20 * Math.sin(gunAngle)
+            );
+            ctx.strokeStyle = '#4A2C2A';
+            ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Draw animals
-            activeAnimals.forEach(animal =>
+            bullets.forEach(bullet =>
             {
-                ctx.fillStyle = 'brown';
-                ctx.fillRect(animal.x, animal.y, 20, 20);
+                ctx.beginPath();
+                ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#FF4500';
+                ctx.fill();
             });
+
+            activeAnimals.forEach(drawAnimal);
 
             animationFrame = requestAnimationFrame(draw);
         };
 
         draw();
-
         return () => cancelAnimationFrame(animationFrame);
-    }, [crosshair, activeAnimals]);
+    }, [gunAngle, bullets, activeAnimals, frameCount]);
 
+    // Timer
     useEffect(() =>
     {
-        if (timeLeft > 0)
+        if (timeLeft > 0 && !gameEnded)
         {
             const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
             return () => clearTimeout(timer);
-        } else
+        } else if (timeLeft === 0 && !gameEnded)
         {
-            onEnd(foodGained);
+            setGameEnded(true);
+            if (typeof onEnd === 'function')
+            {
+                console.log('Calling onEnd with foodGained:', foodGained);
+                onEnd(foodGained);
+            } else
+            {
+                console.error('onEnd is not a function, cannot end game properly');
+            }
         }
-    }, [timeLeft, foodGained, onEnd]);
+    }, [timeLeft, gameEnded, onEnd, foodGained]);
 
+    // Spawn animals
     useEffect(() =>
     {
         const spawnAnimal = () =>
         {
             const animal = animals[Math.floor(Math.random() * animals.length)];
+            const angle = Math.random() * 2 * Math.PI;
             const newAnimal = {
                 ...animal,
-                x: Math.random() * 580,
-                y: Math.random() * 380,
-                dx: (Math.random() - 0.5) * animal.speed,
-                dy: (Math.random() - 0.5) * animal.speed,
+                x: Math.random() * canvasRef.current.width,
+                y: Math.random() * canvasRef.current.height,
+                dx: animal.speed * Math.cos(angle),
+                dy: animal.speed * Math.sin(angle),
             };
             setActiveAnimals(prev => [...prev, newAnimal]);
         };
@@ -80,53 +194,100 @@ const HuntingMiniGame = ({ onEnd }) =>
         return () => clearInterval(interval);
     }, []);
 
+    // Move animals and bullets
     useEffect(() =>
     {
-        const moveAnimals = () =>
+        const updatePositions = () =>
         {
+            setFrameCount(prev => prev + 1);
+
             setActiveAnimals(prev =>
-                prev.map(a => ({
-                    ...a,
-                    x: a.x + a.dx,
-                    y: a.y + a.dy,
-                })).filter(a => a.x >= 0 && a.x <= 580 && a.y >= 0 && a.y <= 380)
+                prev.map(a =>
+                {
+                    let newX = a.x + a.dx;
+                    let newY = a.y + a.dy;
+                    let newDx = a.dx;
+                    let newDy = a.dy;
+
+                    if (newX < -a.size || newX > canvasRef.current.width) newDx = -newDx;
+                    if (newY < 0 || newY > canvasRef.current.height - a.size) newDy = -newDy;
+
+                    return { ...a, x: newX, y: newY, dx: newDx, dy: newDy };
+                })
             );
+
+            setBullets(prev =>
+                prev.map(bullet => ({
+                    ...bullet,
+                    x: bullet.x + bullet.dx,
+                    y: bullet.y + bullet.dy,
+                })).filter(bullet => bullet.y > 0 && bullet.x >= 0 && bullet.x <= canvasRef.current.width)
+            );
+
+            setActiveAnimals(prevAnimals =>
+            {
+                const remainingAnimals = [];
+                prevAnimals.forEach(animal =>
+                {
+                    const hit = bullets.some(bullet =>
+                        Math.sqrt((bullet.x - (animal.x + animal.size / 2)) ** 2 + (bullet.y - (animal.y + animal.size / 2)) ** 2) < animal.size / 2 + 3
+                    );
+                    if (hit)
+                    {
+                        setFoodGained(prev => prev + animal.weight);
+                        setBullets(prev => prev.filter(b =>
+                            Math.sqrt((b.x - (animal.x + animal.size / 2)) ** 2 + (b.y - (animal.y + animal.size / 2)) ** 2) >= animal.size / 2 + 3
+                        ));
+                    } else
+                    {
+                        remainingAnimals.push(animal);
+                    }
+                });
+                return remainingAnimals;
+            });
         };
 
-        const interval = setInterval(moveAnimals, 50);
+        const interval = setInterval(updatePositions, 16);
         return () => clearInterval(interval);
-    }, []);
+    }, [bullets]);
 
+    // Handle keyboard input
     useEffect(() =>
     {
         const handleKeyDown = (e) =>
         {
             switch (e.key)
             {
-                case 'ArrowUp':
-                    setCrosshair(prev => ({ ...prev, y: Math.max(0, prev.y - 10) }));
-                    break;
-                case 'ArrowDown':
-                    setCrosshair(prev => ({ ...prev, y: Math.min(400, prev.y + 10) }));
-                    break;
                 case 'ArrowLeft':
-                    setCrosshair(prev => ({ ...prev, x: Math.max(0, prev.x - 10) }));
+                    setGunAngle(prev =>
+                    {
+                        const newAngle = Math.min(Math.PI, prev + 0.1);
+                        gunAngleRef.current = newAngle;
+                        return newAngle;
+                    });
                     break;
                 case 'ArrowRight':
-                    setCrosshair(prev => ({ ...prev, x: Math.min(600, prev.x + 10) }));
+                    setGunAngle(prev =>
+                    {
+                        const newAngle = Math.max(0, prev - 0.1);
+                        gunAngleRef.current = newAngle;
+                        return newAngle;
+                    });
                     break;
                 case ' ':
                     if (ammo > 0)
                     {
                         setAmmo(ammo - 1);
-                        const hitAnimal = activeAnimals.find(a =>
-                            Math.abs(a.x + 10 - crosshair.x) < 15 && Math.abs(a.y + 10 - crosshair.y) < 15
-                        );
-                        if (hitAnimal)
-                        {
-                            setFoodGained(prev => prev + hitAnimal.weight);
-                            setActiveAnimals(prev => prev.filter(a => a !== hitAnimal));
-                        }
+                        const bulletSpeed = 5;
+                        setBullets(prev => [
+                            ...prev,
+                            {
+                                x: canvasRef.current.width / 2,
+                                y: canvasRef.current.height - 20,
+                                dx: bulletSpeed * Math.cos(gunAngleRef.current),
+                                dy: -bulletSpeed * Math.sin(gunAngleRef.current),
+                            },
+                        ]);
                     }
                     break;
                 default:
@@ -136,16 +297,24 @@ const HuntingMiniGame = ({ onEnd }) =>
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [ammo, activeAnimals, crosshair]);
+    }, [ammo]);
 
     return (
         <div>
             <h2>Hunting</h2>
             <p>Time Left: {timeLeft}s | Ammo: {ammo} | Food Gained: {foodGained} lbs</p>
-            <p>Use arrow keys to move crosshair, spacebar to shoot.</p>
-            <canvas ref={canvasRef} width={600} height={400} style={{ border: '1px solid black' }} />
+            <p>Use Left/Right arrows to aim (left to right), Spacebar to shoot.</p>
+            <canvas ref={canvasRef} width={600} height={400} style={{ border: '2px solid #4A2C2A' }} />
         </div>
     );
+};
+
+HuntingMiniGame.propTypes = {
+    onEnd: PropTypes.func,
+};
+
+HuntingMiniGame.defaultProps = {
+    onEnd: () => console.log('Default onEnd called'),
 };
 
 export default HuntingMiniGame;

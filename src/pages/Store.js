@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../context/GameContext';
 
 const itemPrices = {
@@ -20,7 +20,7 @@ const Store = () =>
         ammunition: 0,
         spareParts: { wheels: 0, axles: 0, tongues: 0 },
     });
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const calculateTotal = () =>
     {
@@ -48,7 +48,7 @@ const Store = () =>
             money: gameState.money - total,
             supplies: cart,
         });
-        history.push('/travel');
+        navigate('/travel');
     };
 
     return (

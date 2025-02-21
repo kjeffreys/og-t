@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../context/GameContext';
 
 const professions = {
@@ -17,7 +17,7 @@ const StartScreen = () =>
     const { gameState, setGameState } = useContext(GameContext);
     const [profession, setProfession] = useState('');
     const [party, setParty] = useState(['', '', '', '', '']);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleProfessionChange = (e) =>
     {
@@ -39,7 +39,7 @@ const StartScreen = () =>
             ...gameState,
             party: party.map(name => ({ name, health: 'Good' })),
         });
-        history.push('/store');
+        navigate('/store');
     };
 
     return (
