@@ -58,18 +58,18 @@ const pixelPatterns = {
     },
     Buffalo: {
         frame1: [
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], // Horns up
-            [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], // Horns + head
-            [0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // Head
-            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], // Hump
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], // Hump/body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0], // Body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
-            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0], // Legs up
-            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0], // Legs up
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
         ],
         frame2: [
             [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -82,8 +82,8 @@ const pixelPatterns = {
             [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
             [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
             [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0], // Legs down
-            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0], // Legs down
+            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0],
         ],
     },
 };
@@ -100,10 +100,11 @@ const HuntingMiniGame = ({ onEnd }) =>
     const [timeLeft, setTimeLeft] = useState(30);
     const [frameCount, setFrameCount] = useState(0);
     const [gameEnded, setGameEnded] = useState(false);
+    const [touchStartX, setTouchStartX] = useState(null);
 
     useEffect(() =>
     {
-        console.log('HuntingMiniGame v2.4 mounted, onEnd type:', typeof onEnd);
+        console.log('HuntingMiniGame v2.5 mounted, onEnd type:', typeof onEnd);
         return () => console.log('HuntingMiniGame unmounting');
     }, [onEnd]);
 
@@ -271,6 +272,7 @@ const HuntingMiniGame = ({ onEnd }) =>
         return () => clearInterval(interval);
     }, [bullets]);
 
+    // Keyboard controls
     useEffect(() =>
     {
         const handleKeyDown = (e) =>
@@ -318,12 +320,90 @@ const HuntingMiniGame = ({ onEnd }) =>
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [ammo]);
 
+    // Touch controls
+    useEffect(() =>
+    {
+        const canvas = canvasRef.current;
+
+        const handleTouchStart = (e) =>
+        {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+
+            if (touchX < canvas.width / 2)
+            {
+                // Left half: Start aiming
+                setTouchStartX(touchX);
+            } else
+            {
+                // Right half: Shoot
+                if (ammo > 0)
+                {
+                    setAmmo(ammo - 1);
+                    const bulletSpeed = 5;
+                    setBullets(prev => [
+                        ...prev,
+                        {
+                            x: canvas.width / 2,
+                            y: canvas.height - 20,
+                            dx: bulletSpeed * Math.cos(gunAngleRef.current),
+                            dy: -bulletSpeed * Math.sin(gunAngleRef.current),
+                        },
+                    ]);
+                }
+            }
+        };
+
+        const handleTouchMove = (e) =>
+        {
+            e.preventDefault();
+            if (touchStartX === null) return;
+
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const deltaX = touchX - touchStartX;
+
+            // Adjust gun angle based on swipe distance
+            setGunAngle(prev =>
+            {
+                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.005)); // Sensitivity: 0.005 radians per pixel
+                gunAngleRef.current = newAngle;
+                return newAngle;
+            });
+        };
+
+        const handleTouchEnd = (e) =>
+        {
+            e.preventDefault();
+            setTouchStartX(null);
+        };
+
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        return () =>
+        {
+            canvas.removeEventListener('touchstart', handleTouchStart);
+            canvas.removeEventListener('touchmove', handleTouchMove);
+            canvas.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [ammo, touchStartX]);
+
     return (
-        <div>
-            <h2>Hunting (v2.4)</h2>
+        <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
+            <h2>Hunting (v2.5)</h2>
             <p>Time Left: {timeLeft}s | Ammo: {ammo} | Food Gained: {foodGained} lbs</p>
-            <p>Use Left/Right arrows to aim (left to right), Spacebar to shoot.</p>
-            <canvas ref={canvasRef} width={600} height={400} style={{ border: '2px solid #4A2C2A' }} />
+            <p>Desktop: Left/Right arrows to aim, Space to shoot. Mobile: Swipe left half to aim, tap right half to shoot.</p>
+            <canvas
+                ref={canvasRef}
+                width={600}
+                height={400}
+                style={{ width: '100%', height: 'auto', border: '2px solid #4A2C2A', touchAction: 'none' }}
+            />
         </div>
     );
 };
