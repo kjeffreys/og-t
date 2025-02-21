@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { GameProvider } from './context/GameContext';
+import StartScreen from './pages/StartScreen';
+import Store from './pages/Store';
+import TravelScreen from './pages/TravelScreen';
+import EndScreen from './pages/EndScreen';
 
-function App() {
+function App()
+{
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <GameProvider>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={StartScreen} />
+          <Route path="/store" component={Store} />
+          <Route path="/travel" component={TravelScreen} />
+          <Route path="/end" component={EndScreen} />
+        </Switch>
+      </Router>
+    </GameProvider>
   );
 }
 
