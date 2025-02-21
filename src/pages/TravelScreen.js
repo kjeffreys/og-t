@@ -39,10 +39,9 @@ const TravelScreen = () =>
 
         let newParty = gameState.party.map(member =>
         {
-            // Prevent death immediately after medicine treatment (track last treatment)
             if (member.lastTreated && member.lastTreated === new Date(gameState.date).toDateString())
             {
-                return { ...member, health: 'Good', lastTreated: null }; // Reset lastTreated after ensuring safety
+                return { ...member, health: 'Good', lastTreated: null };
             }
             if (member.health === 'Good' && Math.random() < sickChance)
             {
@@ -67,7 +66,6 @@ const TravelScreen = () =>
             return member;
         });
 
-        // Trigger events for all sick or injured members
         const sickMembers = newParty.filter(m => m.health === 'Sick' && m.health !== 'Dead');
         const injuredMembers = newParty.filter(m => m.health === 'Injured' && m.health !== 'Dead');
         let eventQueue = [];
@@ -210,12 +208,6 @@ const TravelScreen = () =>
     {
         const paceMiles = { Strenuous: 20, Steady: 15, Slow: 10 };
         const foodConsumption = gameState.party.filter(m => m.health !== 'Dead').length * { Filling: 3, Meager: 2, Bare: 1 }[gameState.rations];
-        const difficultyModifiers = {
-            Easy: { sickChance: 0.02, deathChance: 0.05, starveChance: 0.1 },
-            Medium: { sickChance: 0.05, deathChance: 0.1, starveChance: 0.2 },
-            Hard: { sickChance: 0.1, deathChance: 0.2, starveChance: 0.4 },
-        };
-        const { deathChance } = difficultyModifiers[gameState.difficulty || 'Medium'];
 
         if (currentEvent.type === 'disease' || currentEvent.type === 'injury')
         {
@@ -295,7 +287,7 @@ const TravelScreen = () =>
             {
                 if (Math.random() < 0.7)
                 {
-                    setGameState({ message: 'You escaped the robbers!', choices: ['OK'] });
+                    setCurrentEvent({ message: 'You escaped the robbers!', choices: ['OK'] });
                 } else
                 {
                     setGameState({
