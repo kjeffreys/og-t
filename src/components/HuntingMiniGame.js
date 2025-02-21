@@ -104,14 +104,14 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     useEffect(() =>
     {
-        console.log('HuntingMiniGame v2.5 mounted, onEnd type:', typeof onEnd);
+        console.log('HuntingMiniGame v2.6 mounted, onEnd type:', typeof onEnd);
         return () => console.log('HuntingMiniGame unmounting');
     }, [onEnd]);
 
     useEffect(() =>
     {
         const canvas = canvasRef.current;
-        if (!canvas) return; // Safety check if canvas isn’t ready
+        if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
         let animationFrame;
@@ -140,7 +140,7 @@ const HuntingMiniGame = ({ onEnd }) =>
 
         const draw = () =>
         {
-            if (!ctx) return; // Ensure context exists
+            if (!ctx) return;
 
             ctx.fillStyle = '#8A7F6F';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -203,7 +203,7 @@ const HuntingMiniGame = ({ onEnd }) =>
     useEffect(() =>
     {
         const canvas = canvasRef.current;
-        if (!canvas) return; // Safety check
+        if (!canvas) return;
 
         const spawnAnimal = () =>
         {
@@ -226,7 +226,7 @@ const HuntingMiniGame = ({ onEnd }) =>
     useEffect(() =>
     {
         const canvas = canvasRef.current;
-        if (!canvas) return; // Safety check
+        if (!canvas) return;
 
         const updatePositions = () =>
         {
@@ -309,12 +309,14 @@ const HuntingMiniGame = ({ onEnd }) =>
                     if (ammo > 0)
                     {
                         setAmmo(ammo - 1);
+                        const canvas = canvasRef.current;
+                        if (!canvas) return;
                         const bulletSpeed = 5;
                         setBullets(prev => [
                             ...prev,
                             {
-                                x: canvasRef.current.width / 2,
-                                y: canvasRef.current.height - 20,
+                                x: canvas.width / 2,
+                                y: canvas.height - 20,
                                 dx: bulletSpeed * Math.cos(gunAngleRef.current),
                                 dy: -bulletSpeed * Math.sin(gunAngleRef.current),
                             },
@@ -345,9 +347,11 @@ const HuntingMiniGame = ({ onEnd }) =>
 
             if (touchX < canvas.width / 2)
             {
+                // Left half: Start aiming
                 setTouchStartX(touchX);
             } else
             {
+                // Right half: Shoot
                 if (ammo > 0)
                 {
                     setAmmo(ammo - 1);
@@ -375,9 +379,10 @@ const HuntingMiniGame = ({ onEnd }) =>
             const touchX = touch.clientX - rect.left;
             const deltaX = touchX - touchStartX;
 
+            // Reduced sensitivity from 0.005 to 0.002 for smoother aiming
             setGunAngle(prev =>
             {
-                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.005));
+                const newAngle = Math.max(0, Math.min(Math.PI, prev - deltaX * 0.002));
                 gunAngleRef.current = newAngle;
                 return newAngle;
             });
@@ -406,7 +411,7 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     return (
         <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-            <h2>Hunting (v2.5)</h2>
+            <h2>Hunting (v2.6)</h2>
             <p>Time Left: {timeLeft}s | Ammo: {ammo} | Food Gained: {foodGained} lbs</p>
             <p>Desktop: Left/Right arrows to aim, Space to shoot. Mobile: Swipe left half to aim, tap right half to shoot.</p>
             <canvas
