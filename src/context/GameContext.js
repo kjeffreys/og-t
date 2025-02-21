@@ -13,7 +13,7 @@ export const GameProvider = ({ children }) =>
         position: 0,
         pace: 'Steady',
         rations: 'Filling',
-        difficulty: 'Medium', // Added difficulty
+        difficulty: 'Medium',
         landmarks: [
             { name: 'Independence', distance: 0 },
             { name: 'Kansas River', distance: 100 },
@@ -26,7 +26,6 @@ export const GameProvider = ({ children }) =>
             { name: 'The Dalles', distance: 1900 },
             { name: 'Willamette Valley', distance: 2000 },
         ],
-
     });
 
     return (

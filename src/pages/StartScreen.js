@@ -43,8 +43,8 @@ const StartScreen = () =>
     {
         setGameState({
             ...gameState,
-            party: party.map(name => ({ name, health: 'Good' })),
-            difficulty, // Set difficulty in game state
+            party: party.map(name => ({ name, health: 'Good', lastTreated: null })),
+            difficulty,
         });
         navigate('/store');
     };
