@@ -7,66 +7,83 @@ const animals = [
     { name: 'Buffalo', weight: 200, speed: 0.5, size: 48, color: '#5C4033' },
 ];
 
-// Updated pixel art patterns with animation frames
 const pixelPatterns = {
     Rabbit: {
         frame1: [
-            [0, 0, 1, 1, 0, 0], // Ear
-            [0, 1, 1, 1, 0, 0], // Ear + head
-            [0, 1, 1, 1, 1, 0], // Head + body
-            [0, 0, 1, 1, 1, 1], // Body
-            [0, 0, 1, 1, 1, 0], // Legs up
-            [0, 0, 0, 1, 0, 0], // Tail
+            [0, 0, 1, 1, 0, 0],
+            [0, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 0],
+            [0, 0, 1, 1, 1, 1],
+            [0, 0, 1, 1, 1, 0],
+            [0, 0, 0, 1, 0, 0],
         ],
         frame2: [
             [0, 0, 1, 1, 0, 0],
             [0, 1, 1, 1, 0, 0],
             [0, 1, 1, 1, 1, 0],
             [0, 0, 1, 1, 1, 1],
-            [0, 0, 1, 0, 1, 1], // Legs down
+            [0, 0, 1, 0, 1, 1],
             [0, 0, 0, 1, 0, 0],
         ],
     },
     Deer: {
         frame1: [
-            [1, 1, 0, 0, 1, 0, 0], // Antlers
-            [0, 1, 0, 0, 1, 1, 0], // Antlers + head
-            [0, 0, 1, 1, 0, 1, 0], // Head
-            [0, 0, 1, 1, 1, 1, 0], // Neck + body
-            [0, 0, 0, 1, 1, 1, 1], // Body
-            [0, 0, 1, 0, 1, 0, 0], // Legs up
-            [0, 0, 1, 0, 0, 1, 0], // Legs up
+            [0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         ],
         frame2: [
-            [1, 1, 0, 0, 1, 0, 0],
-            [0, 1, 0, 0, 1, 1, 0],
-            [0, 0, 1, 1, 0, 1, 0],
-            [0, 0, 1, 1, 1, 1, 0],
-            [0, 0, 0, 1, 1, 1, 1],
-            [0, 0, 0, 1, 0, 1, 0], // Legs down
-            [0, 0, 1, 0, 1, 0, 0], // Legs down
+            [0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
         ],
     },
     Buffalo: {
         frame1: [
-            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], // Horn
-            [0, 1, 1, 1, 1, 0, 0, 0, 0, 0], // Horn + head
-            [0, 1, 1, 0, 1, 1, 0, 0, 0, 0], // Head
-            [1, 1, 1, 1, 1, 1, 1, 1, 0, 0], // Hump
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], // Body
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1], // Body
-            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], // Legs up
-            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0], // Legs up
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], // Horns up
+            [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], // Horns + head
+            [0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // Head
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], // Hump
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], // Hump/body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0], // Body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], // Body
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0], // Legs up
+            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0], // Legs up
         ],
         frame2: [
-            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-            [0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0], // Legs down
-            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0], // Legs down
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0], // Legs down
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0], // Legs down
         ],
     },
 };
@@ -84,10 +101,10 @@ const HuntingMiniGame = ({ onEnd }) =>
     const [frameCount, setFrameCount] = useState(0);
     const [gameEnded, setGameEnded] = useState(false);
 
-    // Debugging onEnd
     useEffect(() =>
     {
-        console.log('HuntingMiniGame mounted, onEnd:', typeof onEnd);
+        console.log('HuntingMiniGame v2.4 mounted, onEnd type:', typeof onEnd);
+        return () => console.log('HuntingMiniGame unmounting');
     }, [onEnd]);
 
     useEffect(() =>
@@ -98,7 +115,7 @@ const HuntingMiniGame = ({ onEnd }) =>
 
         const drawAnimal = (animal) =>
         {
-            const pattern = pixelPatterns[animal.name][frameCount % 2 === 0 ? 'frame1' : 'frame2'];
+            const pattern = pixelPatterns[animal.name][Math.floor(frameCount / 12) % 2 === 0 ? 'frame1' : 'frame2'];
             const pixelSize = animal.size / pattern.length;
             for (let y = 0; y < pattern.length; y++)
             {
@@ -152,14 +169,18 @@ const HuntingMiniGame = ({ onEnd }) =>
         return () => cancelAnimationFrame(animationFrame);
     }, [gunAngle, bullets, activeAnimals, frameCount]);
 
-    // Timer
     useEffect(() =>
     {
         if (timeLeft > 0 && !gameEnded)
         {
             const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
             return () => clearTimeout(timer);
-        } else if (timeLeft === 0 && !gameEnded)
+        }
+    }, [timeLeft, gameEnded]);
+
+    useEffect(() =>
+    {
+        if (timeLeft === 0 && !gameEnded)
         {
             setGameEnded(true);
             if (typeof onEnd === 'function')
@@ -168,12 +189,12 @@ const HuntingMiniGame = ({ onEnd }) =>
                 onEnd(foodGained);
             } else
             {
-                console.error('onEnd is not a function, cannot end game properly');
+                console.error('onEnd is not a function, defaulting to log');
+                console.log('Game ended, food gained:', foodGained);
             }
         }
     }, [timeLeft, gameEnded, onEnd, foodGained]);
 
-    // Spawn animals
     useEffect(() =>
     {
         const spawnAnimal = () =>
@@ -190,11 +211,10 @@ const HuntingMiniGame = ({ onEnd }) =>
             setActiveAnimals(prev => [...prev, newAnimal]);
         };
 
-        const interval = setInterval(spawnAnimal, 2000);
+        const interval = setInterval(spawnAnimal, 3000);
         return () => clearInterval(interval);
     }, []);
 
-    // Move animals and bullets
     useEffect(() =>
     {
         const updatePositions = () =>
@@ -251,7 +271,6 @@ const HuntingMiniGame = ({ onEnd }) =>
         return () => clearInterval(interval);
     }, [bullets]);
 
-    // Handle keyboard input
     useEffect(() =>
     {
         const handleKeyDown = (e) =>
@@ -301,7 +320,7 @@ const HuntingMiniGame = ({ onEnd }) =>
 
     return (
         <div>
-            <h2>Hunting</h2>
+            <h2>Hunting (v2.4)</h2>
             <p>Time Left: {timeLeft}s | Ammo: {ammo} | Food Gained: {foodGained} lbs</p>
             <p>Use Left/Right arrows to aim (left to right), Spacebar to shoot.</p>
             <canvas ref={canvasRef} width={600} height={400} style={{ border: '2px solid #4A2C2A' }} />
